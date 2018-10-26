@@ -147,6 +147,7 @@ function getUserData(userID){
             }
             console.log("Assert!");
             ret_userData = find;
+            ret_userData = "abcdefg";
         });
     });
     sleep(10000);
