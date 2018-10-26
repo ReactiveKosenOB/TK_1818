@@ -33,26 +33,15 @@ server.post('/webhook', line.middleware(line_config), (req, res, next) => {
     // 先行してLINE側にステータスコード200でレスポンスする。
     res.sendStatus(200);
 
-    // すべてのイベント処理のプロミスを格納する配列。
-    let events_processed = [];
-
     // イベントオブジェクトを順次処理。
     req.body.events.forEach((event) => {
-        // bot.replyMessage()で返答を送信、そのプロミスをevents_processedに追加。
-        var promise = eventProcessor(event);
-        events_processed.push(promise);
+        // bot.replyMessage()で返答を送信
+        eventProcessor(event);
     });
-
-    // すべてのイベント処理が終了したら何個のイベントが処理されたか出力。
-    Promise.all(events_processed).then(
-        (response) => {
-            console.log(`${response.length} event(s) processed.`);
-        }
-    );
 });
 
 /*
- * LINE Messaging APIから送られてくるeventを処理して、bot.replyMessageのPromiseを返す
+ * LINE Messaging APIから送られてくるeventを処理して、bot.replyMessageする
  */
 function eventProcessor(event){
     var promise_ret = null;
@@ -68,7 +57,7 @@ function eventProcessor(event){
         // promise_ret = messageTextProcessor(event);
     }else if(event.type == "follow"){
         // スタートメッセージを送信する
-        promise_ret = followProcessor(event);
+        followProcessor(event);
     }
 
     return promise_ret;
@@ -76,22 +65,41 @@ function eventProcessor(event){
 
 //イベントタイプがフォローの処理
 function followProcessor(event){
-    var promise_ret = sendStage1Message(event);
-    return promise_ret;
+    var userID = event.source.userId;
+    getUserDataFromDB(userID, sendStage1MessageCallBack);
+}
+
+function getUserDataFromDB(userID, callback){
+    MongoClient.connect(mongodbURI, (error, client) => {
+            var collection;
+    
+            const db = client.db(mongodbAddress);
+         
+            // コレクションの取得
+            collection = db.collection('users');
+         
+            // コレクション中で条件に合致するドキュメントを取得
+            collection.find({'userID': userID}).toArray((error, documents)=>{
+                var find = null;
+                for (var document of documents) {
+                    console.log('find!');
+                    console.log(document);
+                    find = document;
+                    break;
+                }
+                callback(find);
+            });
+        });
 }
 
 // 表示or投稿を聞くときの処理
-function sendStage1Message(event){
-    var promise_ret = null;
-
-    var userID = event.source.userId;
-    var userData = getUserData(userID);
+function sendStage1MessageCallBack(userData){
+    var userID = userData['userID'];
     if(userData == null){
         console.log("user data is null!");
         userData = makeNewUserData(userID); //データベース上にuserが登録されていなければ、登録する
     }
-    promise_ret = replyStartMessage(event); //yes or noのメッセージを送る
-    return promise_ret;
+    replyStartMessage(event); //yes or noのメッセージを送る
 }
 
 //DB上に新しいユーザを作成する
@@ -99,9 +107,7 @@ function makeNewUserData(userID){
     var ret_userData = {'userID': userID, status: 1, showData: "", count: 0};
     MongoClient.connect(mongodbURI, (error, client) => {
         var collection;
-
         const db = client.db(mongodbAddress);
-     
         // コレクションの取得
         collection = db.collection('users');
         collection.insertOne(ret_userData, (error, result) => {
@@ -126,34 +132,6 @@ function messageTextProcessor(event){
 
 }
 
-function getUserData(userID){
-    var ret_userData = null;
-    MongoClient.connect(mongodbURI, (error, client) => {
-        var collection;
-
-        const db = client.db(mongodbAddress);
-     
-        // コレクションの取得
-        collection = db.collection('users');
-     
-        // コレクション中で条件に合致するドキュメントを取得
-        collection.find({'userID': userID}).toArray((error, documents)=>{
-            var find = null;
-            for (var document of documents) {
-                console.log('find!');
-                console.log(document);
-                find = document;
-                break;
-            }
-            console.log("Assert!");
-            ret_userData = find;
-            ret_userData = "abcdefg";
-        });
-    });
-    sleep(10000);
-    return ret_userData;
-}
-
 async function getUserDataFromMongoDB(userID){
     var datab = await MongoClient.connect(mongodbURI);
     var db = datab.db(mongodbAddress);
@@ -166,11 +144,10 @@ async function getUserDataFromMongoDB(userID){
  * スタートメッセージを送信し、プロミスを返す
  */
 function replyStartMessage(event){
-    var promise = bot.replyMessage(event.replyToken, {
+    bot.replyMessage(event.replyToken, {
         type: "text",
         text: START_MESSAGE
     });
-    return promise;
 }
 
 function sleep(waitMsec) {
