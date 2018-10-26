@@ -12,6 +12,7 @@ const line_config = {
     channelSecret: process.env.LINE_CHANNEL_SECRET // 環境変数からChannel Secretをセットしています
 };
 const mongodbURI = process.env.MONGODB_URI; //環境変数からMongoDBのURIを取得
+const mongodbAddress = mongodbURI.split("//")[1].split(":")[0]; //
 
 // -----------------------------------------------------------------------------
 // Webサーバー設定
@@ -61,13 +62,54 @@ function eventProcessor(event){
 
     if (event.type == "message" && event.message.type == "text"){
         //イベントタイプがメッセージで、かつ、テキストタイプだった場合の処理
-        promise_ret = messageTextProcessor(event);
+        // promise_ret = messageTextProcessor(event);
     }else if(event.type == "follow"){
         // スタートメッセージを送信する
-        promise_ret = replyStartMessage(events_processed);
+        promise_ret = followProcessor(event);
     }
 
     return promise_ret;
+}
+
+//イベントタイプがフォローの処理
+function followProcessor(event){
+    var promise_ret = sendStage1Message(event);
+    return promise_ret;
+}
+
+// 表示or投稿を聞くときの処理
+function sendStage1Message(event){
+    var promise_ret = null;
+
+    var userID = event.source.userId;
+    var userData = getUserData(userID);
+    if(userData == null){
+        userData = makeNewUserData(userID); //データベース上にuserが登録されていなければ、登録する
+    }
+    promise_ret = replyStartMessage(); //yes or noのメッセージを送る
+    return promise_ret;
+}
+
+//DB上に新しいユーザを作成する
+function makeNewUserData(userID){
+    var ret_userData = {'userID': userID, status: 1, showData: "", count: 0};
+    MongoClient.connect(mongodbURI, (error, client) => {
+        var collection;
+
+        const db = client.db(mongodbAddress);
+     
+        // コレクションの取得
+        collection = db.collection('users');
+        collection.insertOne(ret_userData, (error, result) => {
+            console.log("inserted!");
+        });
+    });
+    return ret_userData;
+}
+
+//DBに新しいユーザを登録
+function insertNewUserDataToDB(userData){
+
 }
 
 //イベントタイプがメッセージで、かつ、テキストタイプだった場合のevent処理
@@ -75,17 +117,47 @@ function messageTextProcessor(event){
     var promise_ret = null;
     
     var userID = event.source.userId;
-    var userData = getUserData();
+    var userData = getUserData(userID);
+
+
 }
 
 function getUserData(userID){
+    var ret_userData = null;
+    ret_userData = getUserDataFromMongoDB(userID);
+    return ret_userData;
+}
 
+async function getUserDataFromMongoDB(userID){
+    const promise = await new Promise((resolve, reject)=>{
+        MongoClient.connect(mongodbURI, (error, client) => {
+                var collection;
+        
+                const db = client.db(mongodbAddress);
+             
+                // コレクションの取得
+                collection = db.collection('users');
+             
+                // コレクション中で条件に合致するドキュメントを取得
+                collection.find({'userID': userID}).toArray((error, documents)=>{
+                    var find = null;
+                    for (var document of documents) {
+                        console.log('find!');
+                        console.log(document);
+                        find = document;
+                        break;
+                    }
+                    resolve(find);
+                });
+            });
+    });
+    return promise;
 }
 
 /*
  * スタートメッセージを送信し、プロミスを返す
  */
-function replyStartMessage(events_processed){
+function replyStartMessage(){
     var promise = bot.replyMessage(event.replyToken, {
         type: "text",
         text: START_MESSAGE
