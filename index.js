@@ -87,14 +87,13 @@ function getUserDataFromDB(userID, callback){
                     find = document;
                     break;
                 }
-                callback(find);
+                callback(userID, find);
             });
         });
 }
 
 // 表示or投稿を聞くときの処理
-function sendStage1MessageCallBack(userData){
-    var userID = userData['userID'];
+function sendStage1MessageCallBack(userID, userData){
     if(userData == null){
         console.log("user data is null!");
         userData = makeNewUserData(userID); //データベース上にuserが登録されていなければ、登録する
