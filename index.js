@@ -130,7 +130,7 @@ function getUserData(userID){
     var ret_userData = null;
     console.log("get!");
     ret_userData = getUserDataFromMongoDB(userID);
-    sleep(1000);
+    sleep(10000);
     console.log("done!: "+ret_userData);
     return ret_userData;
 }
