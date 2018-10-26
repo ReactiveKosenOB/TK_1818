@@ -128,10 +128,28 @@ function messageTextProcessor(event){
 
 function getUserData(userID){
     var ret_userData = null;
-    console.log("get!");
-    ret_userData = getUserDataFromMongoDB(userID);
+    MongoClient.connect(mongodbURI, (error, client) => {
+        var collection;
+
+        const db = client.db(mongodbAddress);
+     
+        // コレクションの取得
+        collection = db.collection('users');
+     
+        // コレクション中で条件に合致するドキュメントを取得
+        collection.find({'userID': userID}).toArray((error, documents)=>{
+            var find = null;
+            for (var document of documents) {
+                console.log('find!');
+                console.log(document);
+                find = document;
+                break;
+            }
+            console.log("Assert!");
+            ret_userData = find;
+        });
+    });
     sleep(10000);
-    console.log("done!: "+ret_userData);
     return ret_userData;
 }
 
