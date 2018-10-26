@@ -57,7 +57,6 @@ function eventProcessor(event){
 
     if (event.type == "message" && event.message.type == "text"){
         //イベントタイプがメッセージで、かつ、テキストタイプだった場合の処理
-        messageTextProcessor(event);
         getUserDataFromDB(event, userID, messageTextProcessorCallBack);
     }else if(event.type == "follow"){
         // スタートメッセージを送信する
