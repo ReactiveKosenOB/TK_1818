@@ -129,13 +129,13 @@ function messageTextProcessor(event){
 function getUserData(userID){
     var ret_userData = null;
     console.log("get!");
-    ret_userData = getUserDataFromMongoDB(userID);
+    ret_userData = await getUserDataFromMongoDB(userID);
     console.log("done!: "+ret_userData);
     return ret_userData;
 }
 
-async function getUserDataFromMongoDB(userID){
-    const promise = await new Promise((resolve, reject)=>{
+function getUserDataFromMongoDB(userID){
+    return new Promise((resolve, reject)=>{
         MongoClient.connect(mongodbURI, (error, client) => {
                 var collection;
         
@@ -157,7 +157,6 @@ async function getUserDataFromMongoDB(userID){
                 });
             });
     });
-    return promise;
 }
 
 /*
