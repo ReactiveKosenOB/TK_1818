@@ -135,30 +135,10 @@ function getUserData(userID){
 }
 
 async function getUserDataFromMongoDB(userID){
-    var promise = await new Promise((resolve, reject)=>{
-        MongoClient.connect(mongodbURI, (error, client) => {
-            var collection;
-    
-            const db = client.db(mongodbAddress);
-         
-            // コレクションの取得
-            collection = db.collection('users');
-         
-            // コレクション中で条件に合致するドキュメントを取得
-            collection.find({'userID': userID}).toArray((error, documents)=>{
-                var find = null;
-                for (var document of documents) {
-                    console.log('find!');
-                    console.log(document);
-                    find = document;
-                    break;
-                }
-                console.log("resolve!");
-                resolve(find);
-            });
-        });
-    });
-    return promise;
+    const db = await MongoClient.connect(url);
+    const MyCollection = db.collection('users');
+    const result = await MyCollection.find({'userID': userID}).toArray();
+    return result;
 }
 
 /*
