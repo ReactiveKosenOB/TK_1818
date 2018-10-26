@@ -135,7 +135,8 @@ function getUserData(userID){
 }
 
 async function getUserDataFromMongoDB(userID){
-    const db = await MongoClient.connect(mongodbURI);
+    var datab = await MongoClient.connect(mongodbURI);
+    var db = datab.db(mongodbAddress);
     const MyCollection = db.collection('users');
     const result = await MyCollection.find({'userID': userID}).toArray();
     return result;
