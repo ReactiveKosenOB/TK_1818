@@ -87,6 +87,7 @@ function sendStage1Message(event){
     var userID = event.source.userId;
     var userData = getUserData(userID);
     if(userData == null){
+        console.log("user data is null!");
         userData = makeNewUserData(userID); //データベース上にuserが登録されていなければ、登録する
     }
     promise_ret = replyStartMessage(event); //yes or noのメッセージを送る
