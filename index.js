@@ -163,7 +163,8 @@ function stage1Processor(event, userData){
         stage1POST(event, userData);
         return 2;
     }else{
-
+        replyStartMessage(event);
+        return 1;
     }
 }
 
