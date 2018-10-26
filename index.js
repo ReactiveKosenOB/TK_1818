@@ -128,7 +128,9 @@ function messageTextProcessor(event){
 
 function getUserData(userID){
     var ret_userData = null;
+    console.log("get!");
     ret_userData = getUserDataFromMongoDB(userID);
+    console.log("done!: "+ret_userData);
     return ret_userData;
 }
 
