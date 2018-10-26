@@ -126,10 +126,10 @@ function messageTextProcessor(event){
 
 }
 
-function getUserData(userID){
+async function getUserData(userID){
     var ret_userData = null;
     console.log("get!");
-    ret_userData = getUserDataFromMongoDB(userID);
+    ret_userData = await getUserDataFromMongoDB(userID);
     console.log("done!: "+ret_userData);
     return ret_userData;
 }
