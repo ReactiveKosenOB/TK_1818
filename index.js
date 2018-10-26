@@ -126,23 +126,20 @@ function messageTextProcessor(event){
 
 }
 
-async function getUserData(userID){
+function getUserData(userID){
     var ret_userData = null;
     console.log("get!");
-    ret_userData = await getUserDataFromMongoDB(userID);
+    ret_userData = getUserDataFromMongoDB(userID);
+    sleep(1000);
     console.log("done!: "+ret_userData);
     return ret_userData;
 }
 
 async function getUserDataFromMongoDB(userID){
     var datab = await MongoClient.connect(mongodbURI);
-    console.log("a: "+datab);
     var db = datab.db(mongodbAddress);
-    console.log("b: "+db);
     const MyCollection = db.collection('users');
-    console.log("c: "+MyCollection);
     const result = await MyCollection.find({'userID': userID}).toArray();
-    console.log("d: "+result);
     return result;
 }
 
@@ -155,4 +152,11 @@ function replyStartMessage(event){
         text: START_MESSAGE
     });
     return promise;
+}
+
+function sleep(waitMsec) {
+    var startMsec = new Date();
+
+    // 指定ミリ秒間だけループさせる（CPUは常にビジー状態）
+    while (new Date() - startMsec < waitMsec);
 }
