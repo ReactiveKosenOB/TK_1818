@@ -14,6 +14,9 @@ const line_config = {
 const mongodbURI = process.env.MONGODB_URI; //環境変数からMongoDBのURIを取得
 const mongodbAddress = mongodbURI.split("//")[1].split(":")[0]; //
 
+console.log("mongodbURI: "+ mongodbURI);
+console.log("mogodbAddress: "+mongodbAddress);
+
 // -----------------------------------------------------------------------------
 // Webサーバー設定
 server.listen(process.env.PORT || 3000);
@@ -86,7 +89,7 @@ function sendStage1Message(event){
     if(userData == null){
         userData = makeNewUserData(userID); //データベース上にuserが登録されていなければ、登録する
     }
-    promise_ret = replyStartMessage(); //yes or noのメッセージを送る
+    promise_ret = replyStartMessage(event); //yes or noのメッセージを送る
     return promise_ret;
 }
 
@@ -157,7 +160,7 @@ async function getUserDataFromMongoDB(userID){
 /*
  * スタートメッセージを送信し、プロミスを返す
  */
-function replyStartMessage(){
+function replyStartMessage(event){
     var promise = bot.replyMessage(event.replyToken, {
         type: "text",
         text: START_MESSAGE
