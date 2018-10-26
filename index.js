@@ -66,10 +66,10 @@ function eventProcessor(event){
 //イベントタイプがフォローの処理
 function followProcessor(event){
     var userID = event.source.userId;
-    getUserDataFromDB(userID, sendStage1MessageCallBack);
+    getUserDataFromDB(event, userID, sendStage1MessageCallBack);
 }
 
-function getUserDataFromDB(userID, callback){
+function getUserDataFromDB(event, userID, callback){
     MongoClient.connect(mongodbURI, (error, client) => {
             var collection;
     
@@ -87,13 +87,13 @@ function getUserDataFromDB(userID, callback){
                     find = document;
                     break;
                 }
-                callback(userID, find);
+                callback(event, userID, find);
             });
         });
 }
 
 // 表示or投稿を聞くときの処理
-function sendStage1MessageCallBack(userID, userData){
+function sendStage1MessageCallBack(event, userID, userData){
     if(userData == null){
         console.log("user data is null!");
         userData = makeNewUserData(userID); //データベース上にuserが登録されていなければ、登録する
