@@ -24,6 +24,9 @@ server.listen(process.env.PORT || 3000);
 // -----------------------------------------------------------------------------
 // 定型文の登録
 const START_MESSAGE = "「投稿」or「表示」";
+const POST_MESSAGE = "投稿する内容を入力してください";
+const SHOW = "表示";
+const POST = "投稿";
 
 
 // -----------------------------------------------------------------------------
@@ -54,7 +57,8 @@ function eventProcessor(event){
 
     if (event.type == "message" && event.message.type == "text"){
         //イベントタイプがメッセージで、かつ、テキストタイプだった場合の処理
-        // promise_ret = messageTextProcessor(event);
+        messageTextProcessor(event);
+        getUserDataFromDB(event, userID, messageTextProcessorCallBack);
     }else if(event.type == "follow"){
         // スタートメッセージを送信する
         followProcessor(event);
@@ -116,27 +120,59 @@ function makeNewUserData(userID){
     return ret_userData;
 }
 
-//DBに新しいユーザを登録
-function insertNewUserDataToDB(userData){
-
-}
-
 //イベントタイプがメッセージで、かつ、テキストタイプだった場合のevent処理
-function messageTextProcessor(event){
-    var promise_ret = null;
-    
-    var userID = event.source.userId;
-    var userData = getUserData(userID);
+function messageTextProcessorCallBack(event, userID, userData){
+    if(userData == null)return;
 
+    var status = userData['status'];
+    var nextStatus = 1;
+    if(status == 1){
+        nextStatus = stage1Processor(event, userData);
+    }else if(status == 2){
 
+    }else if(status == 3){
+
+    }else{
+        return;
+    }
+    userData['status'] = nextStatus;
+    updateUserData(userData);
 }
 
-async function getUserDataFromMongoDB(userID){
-    var datab = await MongoClient.connect(mongodbURI);
-    var db = datab.db(mongodbAddress);
-    const MyCollection = db.collection('users');
-    const result = await MyCollection.find({'userID': userID}).toArray();
-    return result;
+function updateUserData(userData){
+    MongoClient.connect(mongodbURI, (error, client) => {
+        var collection;
+
+        const db = client.db(mongodbAddress);
+     
+        // コレクションの取得
+        collection = db.collection('users');
+        collection.updateMany(
+            { userID: userData.userID },
+            { $set: userData },
+        (error, result) => {
+            console.log("updated!");
+        });
+    });
+}
+
+function stage1Processor(event, userData){
+    var text = event.message.text;
+    if(text == SHOW){
+        
+    }else if(text == POST){
+        stage1POST(event, userData);
+        return 2;
+    }else{
+
+    }
+}
+
+function stage1POST(event, userData){
+    bot.replyMessage(event.replyToken, {
+        type: "text",
+        text: POST_MESSAGE
+    });
 }
 
 /*
