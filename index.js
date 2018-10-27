@@ -74,25 +74,28 @@ function followProcessor(event){
 
 function getUserDataFromDB(event, userID, callback){
     MongoClient.connect(mongodbURI, (error, client) => {
-            var collection;
-    
-            const db = client.db(mongodbAddress);
-         
-            // コレクションの取得
-            collection = db.collection('users');
-         
-            // コレクション中で条件に合致するドキュメントを取得
-            collection.find({'userID': userID}).toArray((error, documents)=>{
-                var find = null;
-                for (var document of documents) {
-                    console.log('find!');
-                    console.log(document);
-                    find = document;
-                    break;
-                }
-                callback(event, userID, find);
-            });
-        });
+        var collection;
+
+        const db = client.db(mongodbAddress);
+     
+        // コレクションの取得
+        collection = db.collection('users');
+     
+        // コレクション中で条件に合致するドキュメントを取得
+        collection.find({'userID': userID}).toArray((error, documents)=>{
+            var find = null;
+            for (var document of documents) {
+                console.log('find!');
+                console.log(document);
+                find = document;
+                break;
+            }
+            callback(event, userID, find);
+        });
+        if(error){
+            console.log(error)
+        }
+    });
 }
 
 // 表示or投稿を聞くときの処理
