@@ -1,1 +1,2 @@
-web: node clova_sample/app.js
+cd clova_sample
+web: node app.js
