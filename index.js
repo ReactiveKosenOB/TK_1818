@@ -160,7 +160,9 @@ function stage1Processor(event, userData){
     //show flex message
     if(text == SHOW){
         //TODO
-
+        getDBData(event, 'users', {userID:userData.userID}, function(event, condition, find){
+            console.log(find)
+        })
         return 1;
     }else if(text == POST){
         stage1POST(event, userData);
@@ -193,6 +195,29 @@ function replyStartMessage(event){
  */
 function send(event, json) {
     bot.replyMessage(event.replyToken, json);
+}
+
+function getDBData(event, collectionName, condition, callback){
+    MongoClient.connect(mongodbURI, (error, client) => {
+        var collection;
+
+        const db = client.db(mongodbAddress);
+     
+        // コレクションの取得
+        collection = db.collection(collectionName);
+     
+        // コレクション中で条件に合致するドキュメントを取得
+        collection.find(condition).toArray((error, documents)=>{
+            var find = null;
+            for (var document of documents) {
+                console.log('find!');
+                console.log(document);
+                find = document;
+                break;
+            }
+            callback(event, condition, find);
+        });
+    });
 }
 
 function sleep(waitMsec) {
