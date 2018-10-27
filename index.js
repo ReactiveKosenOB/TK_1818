@@ -83,6 +83,9 @@ function getUserDataFromDB(event, userID, callback){
      
         // コレクション中で条件に合致するドキュメントを取得
         collection.find({'userID': userID}).toArray((error, documents)=>{
+            if(error){
+                console.log(error)
+            }
             var find = null;
             for (var document of documents) {
                 console.log('find!');
@@ -100,6 +103,7 @@ function getUserDataFromDB(event, userID, callback){
 
 // 表示or投稿を聞くときの処理
 function sendStage1MessageCallBack(event, userID, userData){
+    console.log("send stage 1 messagze callback")
     if(userData == null){
         console.log("user data is null!");
         userData = makeNewUserData(userID); //データベース上にuserが登録されていなければ、登録する
@@ -163,9 +167,10 @@ function stage1Processor(event, userData){
     //show flex message
     if(text == SHOW){
         //TODO
-        getDBData(event, 'users', {userID:userData.userID}, function(event, condition, find){
-            console.log(find)
-        })
+        getDBData(event, 'post', {userID:userData.userID}, function(event, condition, find){
+            console.log("find : " , find)
+        });
+        console.log("end")
         return 1;
     }else if(text == POST){
         stage1POST(event, userData);
@@ -177,7 +182,7 @@ function stage1Processor(event, userData){
 }
 
 function stage1POST(event, userData){
-    send(event.replyToken, {
+    sendQuery(event.replyToken, {
         type: "text",
         text: POST_MESSAGE
     });
@@ -187,7 +192,8 @@ function stage1POST(event, userData){
  * スタートメッセージを送信し、プロミスを返す
  */
 function replyStartMessage(event){
-    send({
+    console.log("replyStartMessage")
+    sendQuery(event.replyToken, {
         type: "text",
         text: START_MESSAGE
     });
@@ -196,8 +202,8 @@ function replyStartMessage(event){
 /*
  *  JSONを投げるだけのfunction
  */
-function send(event, json) {
-    bot.replyMessage(event.replyToken, json);
+function sendQuery(token, json) {
+    bot.replyMessage(token, json);
 }
 
 function getDBData(event, collectionName, condition, callback){
