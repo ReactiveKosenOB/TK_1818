@@ -6,6 +6,9 @@ var ContentsBuilder = LINEModule.contentsBuilder
 
 module.exports = {
     getTemplate : function(contentData) {
-        
+        return {
+            'type' : 'text',
+            'text' : "てきすと"
+        }
     }
 }

@@ -3,6 +3,7 @@
 const server = require("express")();
 const line = require("@line/bot-sdk"); // Messaging APIのSDKをインポート
 const mongodb = require('mongodb')
+const flexPostMessage = require('./src/templates/FlexPostMessageTemplate')
 const MongoClient = mongodb.MongoClient //mongodbを利用するためのインスタンス
 
 // -----------------------------------------------------------------------------
@@ -162,15 +163,18 @@ function updateUserData(userData){
     });
 }
 
+function displayFlexPostMessage(){
+
+}
+
 function stage1Processor(event, userData){
     var text = event.message.text;
     //show flex message
     if(text == SHOW){
         //TODO
         getDBData(event, 'post', {userID:userData.userID}, function(event, condition, find){
-            console.log("find : " , find)
+            send(event.replyToken, flexPostMessage.getTemplate(find))
         });
-        console.log("end")
         return 1;
     }else if(text == POST){
         stage1POST(event, userData);
