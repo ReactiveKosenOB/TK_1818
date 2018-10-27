@@ -157,8 +157,11 @@ function updateUserData(userData){
 
 function stage1Processor(event, userData){
     var text = event.message.text;
+    //show flex message
     if(text == SHOW){
-        
+        //TODO
+
+        return 1;
     }else if(text == POST){
         stage1POST(event, userData);
         return 2;
@@ -169,7 +172,7 @@ function stage1Processor(event, userData){
 }
 
 function stage1POST(event, userData){
-    bot.replyMessage(event.replyToken, {
+    send(event.replyToken, {
         type: "text",
         text: POST_MESSAGE
     });
@@ -179,10 +182,17 @@ function stage1POST(event, userData){
  * スタートメッセージを送信し、プロミスを返す
  */
 function replyStartMessage(event){
-    bot.replyMessage(event.replyToken, {
+    send({
         type: "text",
         text: START_MESSAGE
     });
+}
+
+/*
+ *  JSONを投げるだけのfunction
+ */
+function send(event, json) {
+    bot.replyMessage(event.replyToken, json);
 }
 
 function sleep(waitMsec) {
