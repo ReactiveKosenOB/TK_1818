@@ -173,7 +173,7 @@ function stage1Processor(event, userData){
     if(text == SHOW){
         //TODO
         getDBData(event, 'post', {userID:userData.userID}, function(event, condition, find){
-            send(event.replyToken, flexPostMessage.getTemplate(find))
+            sendQuery(event.replyToken, flexPostMessage.getTemplate(find))
         });
         return 1;
     }else if(text == POST){
