@@ -742,9 +742,10 @@ function updateUserData(userData){
  */
 function makeNewUserData(userID){
     var ret_userData = {'userID': userID, status: 1, showData: "", count: 0};
-    bot.getProfile(userID, (error, profile) => {
-        console.log(profile);
-    })
+    const promise = bot.getProfile(userID);
+    Promise.all([promise]).then(function(values) {
+        console.log(values[0]);
+    });
     MongoClient.connect(mongodbURI, (error, client) => {
         var collection;
         const db = client.db(mongodbAddress);
