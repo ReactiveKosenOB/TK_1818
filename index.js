@@ -744,16 +744,16 @@ function makeNewUserData(userID){
     var ret_userData = {'userID': userID, status: 1, showData: "", count: 0};
     const promise = bot.getProfile(userID);
     Promise.all([promise]).then(function(values) {
-        console.log(values[0]);
-    });
-    MongoClient.connect(mongodbURI, (error, client) => {
-        var collection;
-        const db = client.db(mongodbAddress);
-        // コレクションの取得
-        collection = db.collection('users');
-        collection.insertOne(ret_userData, (error, result) => {
-            console.log("inserted!");
-        });
+        ret_userData['pictureUrl'] = values[0].pictureUrl
+        MongoClient.connect(mongodbURI, (error, client) => {
+            var collection;
+            const db = client.db(mongodbAddress);
+            // コレクションの取得
+            collection = db.collection('users');
+            collection.insertOne(ret_userData, (error, result) => {
+                console.log("inserted!");
+            });
+        });
     });
     return ret_userData;
 }
