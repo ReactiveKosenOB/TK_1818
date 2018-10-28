@@ -373,7 +373,7 @@ function showMyPost(event, userData){
         //flex post messageを配列にpush
         for(index in find){
             if(conts.length == 10)break;
-            conts.push(messageTemplate.MyselfResponseMessage.getTemplate(find[index], userData.userID).content)
+            conts.push(messageTemplate.MyselfResponseMessage.getTemplate(find[index], userData).content)
         }
         //LINEMessageに配列を連想配列にして入れるとカルーセルもらえる
         console.log(JSON.stringify(conts))
@@ -911,7 +911,7 @@ function showRandomPost(event, userData, condition, category){
             var conts = [messageTemplate.FlexThemeMessage.getTemplate(post, colors[condition.category]).content]
             //flex post messageを配列にpush
             for(index in find){
-                conts.push(messageTemplate.FlexPostMessage.getTemplate(find[index], userData.userID).content)
+                conts.push(messageTemplate.FlexPostMessage.getTemplate(find[index], userData).content)
             }
 
             console.log("find : ", find)
@@ -948,7 +948,7 @@ function showTopPost(event, userData){
             }
             var conts = [messageTemplate.FlexThemeMessage.getTemplate(post, colors[getCategoryFromStatus(userData.status)]).content]
             for(index in find){
-                conts.push(messageTemplate.MyselfResponseMessage.getTemplate(find[index], userData.userID).content)
+                conts.push(messageTemplate.MyselfResponseMessage.getTemplate(find[index], userData).content)
             }
             //LINEMessageに配列を連想配列にして入れるとカルーセルもらえる
             var msg = new LINEMessage(
