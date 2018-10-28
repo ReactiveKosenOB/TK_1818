@@ -203,7 +203,7 @@ module.exports = {
                         {
                             "flex": 0,
                             "type": "image",
-                            "url": userdata.pictureUrl,
+                            "url": userdata.pictureUrl+'.jpg',
                             "size": "xs"
                         }
                     ).contents(
@@ -303,7 +303,7 @@ module.exports = {
                         {
                             "flex": 0,
                             "type": "image",
-                            "url": userdata.pictureUrl,
+                            "url": userdata.pictureUrl+'.jpg',
                             "size": "xs"
                         }
                     ).contents(
