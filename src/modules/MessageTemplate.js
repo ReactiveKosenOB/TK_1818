@@ -47,7 +47,7 @@ module.exports = {
                         {
                             "flex": 0,
                             "type": "image",
-                            "url": post.pictureUrl,
+                            "url": "https://example.com",
                             "size": "xs"
                         }
                     ).contents(
