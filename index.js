@@ -526,16 +526,20 @@ function stage1POST(event, userData){
  * スタートメッセージを送信
  */
 function replyStartMessage(event){
-    sendQuery(event.replyToken, messageTemplate.QuickReplyMessage.getTemplate(
-        START_MESSAGE, 
-        {
-            "type": "text",
-            "label": "投稿"
-        },{
-            "type": "text",
-            "label": "表示"
-        }
-    ));
+    sendQuery(event.replyToken, {
+                "type": "text",
+                "text": "Hello World!"
+            })
+    // sendQuery(event.replyToken, messageTemplate.QuickReplyMessage.getTemplate(
+    //     START_MESSAGE, 
+    //     {
+    //         "type": "text",
+    //         "label": "投稿"
+    //     },{
+    //         "type": "text",
+    //         "label": "表示"
+    //     }
+    // ));
 }
 
 /*
