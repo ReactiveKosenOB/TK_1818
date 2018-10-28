@@ -742,11 +742,9 @@ function updateUserData(userData){
  */
 function makeNewUserData(userID){
     var ret_userData = {'userID': userID, status: 1, showData: "", count: 0};
-    var profile;
-    (async function(){
-        profile = await bot.getProfile(userID)
+    bot.getProfile(userID, (error, profile) => {
+        console.log(profile);
     })
-    console.log(profile)
     MongoClient.connect(mongodbURI, (error, client) => {
         var collection;
         const db = client.db(mongodbAddress);
