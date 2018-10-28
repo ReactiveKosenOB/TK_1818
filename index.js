@@ -260,21 +260,21 @@ function displayTheme(event, text) {
         if (text == OGIRI) {
             //大喜利のテーマ
             post = {
-                endDate: '2018/02/01 12:15:30',
+                endDate: '2018/11/01 12:15:30',
                 summary: '迷惑メールと知りつつも思わず開封してしまったタイトル(件名)とは？',
                 category: text
             };
         } else if (text == TSUKOMI) {
             //つっこみのテーマ
             post = {
-                endDate: '2018/10/27 14:11:01',
+                endDate: '2018/10/29 14:11:01',
                 summary: 'お父さん！僕には、お金も仕事もやる気もプライドもありません。こんな僕でよければ、娘さんを僕にください！',
                 category: text
             };
         } else if (text == ARU) {
             //あるある
             post = {
-                endDate: '2018/09/15 10:02:39',
+                endDate: '2018/11/15 10:02:39',
                 summary: '仕事の時は起きれないのに休みの日だけは早く起きれる。',
                 category: text
             };
@@ -902,3 +902,4 @@ function showTopPost(event, userData) {
         })
     });
 }
+s
