@@ -902,4 +902,3 @@ function showTopPost(event, userData) {
         })
     });
 }
-s
