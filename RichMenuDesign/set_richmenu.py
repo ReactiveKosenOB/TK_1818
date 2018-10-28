@@ -151,5 +151,6 @@ def release_richmenu_user_id(userid):
 
 if __name__ == '__main__':
     res = button_data()
-    upload_img(res, "ann2 (2).png")
+    print(res)
+    upload_img(res, "richMenu.png")
     set_richmenu(res)
