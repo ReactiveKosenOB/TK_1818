@@ -913,7 +913,7 @@ function showRandomPost(event, userData, condition, category){
             for(index in find){
                 conts.push(messageTemplate.FlexPostMessage.getTemplate(find[index], userData).content)
             }
-
+            console.log("userdata : ", userData)
             console.log("find : ", find)
             //LINEMessageに配列を連想配列にして入れるとカルーセルもらえる
             var msg = new LINEMessage(
